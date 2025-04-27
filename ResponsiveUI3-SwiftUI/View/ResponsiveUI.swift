@@ -7,12 +7,30 @@
 
 import SwiftUI
 
-struct ResponsiveUI: View {
+struct ResponsiveUI<Content: View>:View {
+    var content: (Properties) -> Content
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        GeometryReader { proxy in
+            let size = proxy.size
+            let isLandscape = size.width > size.height
+            let isiPad = UIDevice.current.userInterfaceIdiom == .pad
+            let isiPadPotrait = isiPad && !isLandscape
+            
+            content(Properties(isLandscape: isLandscape, isiPad: isiPad, isiPadPortrait: isiPadPotrait, size: size))
+            
+                .frame(width: size.width, height: size.height, alignment: .center)
+
+            
+        }
     }
 }
 
-#Preview {
-    ResponsiveUI()
+
+struct Properties {
+    
+    var isLandscape : Bool
+    var isiPad : Bool
+    var isiPadPortrait: Bool
+    var size : CGSize
 }
